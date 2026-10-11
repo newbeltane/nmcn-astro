@@ -1,0 +1,23 @@
+{
+  "siteName": "National Mission Commission of Nepal",
+  "tagline": "Training & equipping saints to reach out the unreached",
+  "contact": {
+    "address": "P.O. Box 8975, EPC-830, Kathmandu, NEPAL",
+    "phone": "+977 1 5591706",
+    "email": "nmcn2001@gmail.com"
+  },
+  "social": {
+    "facebook": "https://facebook.com/",
+    "youtube": "https://youtube.com/",
+    "instagram": "https://instagram.com/"
+  },
+  "nav": [
+    { "label": "Home", "href": "/en/" },
+    { "label": "Who We Are", "href": "/en/who-we-are" },
+    { "label": "What We Do", "href": "/en/what-we-do" },
+    { "label": "News", "href": "/en/news" },
+    { "label": "Get Involved", "href": "/en/get-involved" },
+    { "label": "Donate", "href": "/en/donate" },
+    { "label": "Contact Us", "href": "/en/contact" }
+  ]
+}

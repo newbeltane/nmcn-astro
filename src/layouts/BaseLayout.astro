@@ -1,0 +1,160 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeoHead from '../components/SeoHead.astro';
+import { useTranslations, getLocaleFromUrl } from '../i18n/utils';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <SeoHead title={title} description={description} locale={locale} image={image} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">{t('common.skipToContent')}</a>
+    <Header locale={locale} />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+
+    <!-- Mobile nav island styles (shared) -->
+    <style is:global>
+      /* Hamburger */
+      .mobile-nav { display: block; }
+      @media (min-width: 1024px) {
+        .mobile-nav { display: none; }
+      }
+      .hamburger {
+        background: transparent;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        width: 44px;
+        height: 44px;
+        display: inline-grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .hamburger-box { position: relative; width: 22px; height: 16px; display: block; }
+      .hamburger-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--color-navy);
+        border-radius: 2px;
+        transition: transform 0.2s ease, opacity 0.2s ease, top 0.2s ease;
+      }
+      .hamburger-line:nth-child(1) { top: 0; }
+      .hamburger-line:nth-child(2) { top: 7px; }
+      .hamburger-line:nth-child(3) { top: 14px; }
+      .hamburger-line.is-open:nth-child(1) { top: 7px; transform: rotate(45deg); }
+      .hamburger-line.is-open:nth-child(2) { opacity: 0; }
+      .hamburger-line.is-open:nth-child(3) { top: 7px; transform: rotate(-45deg); }
+
+      .mobile-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        z-index: 1100;
+      }
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100dvh;
+        width: min(320px, 85vw);
+        background: #fff;
+        z-index: 1200;
+        box-shadow: var(--shadow-lg);
+        padding: 5rem 1.5rem 2rem;
+        transform: translateX(100%);
+        transition: transform 0.25s ease;
+        overflow-y: auto;
+      }
+      .mobile-menu.is-open { transform: translateX(0); }
+      .mobile-menu ul { list-style: none; margin: 0; padding: 0; }
+      .mobile-menu li { margin-bottom: 0.25rem; }
+      .mobile-menu a {
+        display: block;
+        padding: 0.85rem 1rem;
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--color-navy);
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+      }
+      .mobile-menu a:hover { background: var(--color-bg-alt); }
+      .mobile-menu a.current { color: var(--color-primary); background: rgba(4, 107, 210, 0.08); }
+
+      /* Stats island */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+      }
+      .stat-card {
+        text-align: center;
+        padding: 1.75rem 1rem;
+        background: #fff;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+      }
+      .stat-value {
+        display: block;
+        font-size: clamp(2.2rem, 5vw, 3rem);
+        font-weight: 800;
+        color: var(--color-primary);
+        line-height: 1;
+      }
+      .stat-label { display: block; margin-top: 0.5rem; color: var(--color-muted); font-weight: 500; }
+
+      /* Contact form */
+      .contact-form { display: flex; flex-direction: column; gap: 1.1rem; }
+      .form-row { display: flex; flex-direction: column; gap: 0.4rem; }
+      .form-row label { font-weight: 600; color: var(--color-navy); }
+      .form-row .req { color: var(--color-error); }
+      .contact-form input,
+      .contact-form textarea {
+        font-family: inherit;
+        font-size: 1rem;
+        padding: 0.75rem 0.9rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        background: #fff;
+        color: var(--color-body);
+        width: 100%;
+      }
+      .contact-form input:focus,
+      .contact-form textarea:focus {
+        border-color: var(--color-primary);
+        outline: 3px solid rgba(4, 107, 210, 0.25);
+        outline-offset: 0;
+      }
+      .contact-form input[aria-invalid='true'],
+      .contact-form textarea[aria-invalid='true'] { border-color: var(--color-error); }
+      .field-err { color: var(--color-error); font-size: 0.85rem; font-weight: 600; }
+      .form-status { padding: 1rem 1.25rem; border-radius: var(--radius-sm); font-weight: 600; }
+      .form-status--success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+      .form-status--error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    </style>
+  </body>
+</html>

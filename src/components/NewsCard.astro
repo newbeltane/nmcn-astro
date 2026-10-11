@@ -1,0 +1,43 @@
+---
+interface Props {
+  title: string;
+  date: Date | string;
+  excerpt?: string;
+  image: string;
+  imageAlt?: string;
+  href: string;
+  locale: string;
+  readLabel: string;
+}
+const { title, date, excerpt, image, imageAlt, href, locale, readLabel } = Astro.props;
+const d = typeof date === 'string' ? new Date(date) : date;
+const dateStr = d.toLocaleDateString(locale === 'ne' ? 'ne-NP' : 'en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article class="card news-card">
+  <a href={href} class="news-media" tabindex="-1" aria-hidden="true">
+    <img src={image} alt={imageAlt ?? title} width="640" height="400" loading="lazy" />
+  </a>
+  <div class="card-body">
+    <time datetime={d.toISOString()} class="news-date">{dateStr}</time>
+    <h3><a href={href}>{title}</a></h3>
+    {excerpt && <p class="news-excerpt">{excerpt}</p>}
+    <a href={href} class="news-link">
+      {readLabel}
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>
+
+<style>
+  .news-date { font-size: 0.8rem; color: var(--color-muted); font-weight: 600; }
+  .news-card h3 { margin: 0.25rem 0; font-size: 1.2rem; }
+  .news-card h3 a { color: var(--color-navy); }
+  .news-card h3 a:hover { color: var(--color-primary); }
+  .news-excerpt { color: var(--color-body); margin: 0; }
+  .news-link { font-weight: 600; margin-top: auto; display: inline-flex; gap: 0.35rem; }
+</style>

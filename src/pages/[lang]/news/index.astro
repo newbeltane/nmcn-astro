@@ -1,0 +1,213 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import HeroSection from '../../../components/HeroSection.astro';
+import { localePaths } from '../../../lib/content';
+import { useTranslations, localizedPath, type Locale } from '../../../i18n/utils';
+
+export const getStaticPaths = localePaths;
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const t = useTranslations(locale);
+
+// Query only posts belonging strictly to the current locale
+const allNews = await getCollection('news', (entry: CollectionEntry<'news'>) => {
+  const matchesLocale = entry.id.startsWith(`${locale}/`) || entry.data.locale === locale;
+  return matchesLocale && !entry.data.draft;
+});
+
+const sortedNews = allNews.sort((a: CollectionEntry<'news'>, b: CollectionEntry<'news'>) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const posts = sortedNews.map((entry) => {
+  const slug = entry.id.replace(new RegExp(`^${locale}/`), '').replace(/\.md$/, '');
+  const formattedDate = new Date(entry.data.date).toLocaleDateString(
+    locale === 'ne' ? 'ne-NP' : 'en-GB',
+    { year: 'numeric', month: 'long', day: 'numeric' }
+  );
+
+  return {
+    slug,
+    formattedDate,
+    isoDate: new Date(entry.data.date).toISOString(),
+    title: entry.data.title,
+    excerpt: entry.data.excerpt,
+    image: entry.data.image,
+    imageAlt: entry.data.imageAlt || entry.data.title,
+    author: entry.data.author,
+  };
+});
+
+const pageTitle = t('news.title') || (locale === 'ne' ? 'समाचार' : 'News');
+const pageSubtitle = t('news.subtitle') || (locale === 'ne' ? 'एनएमसीएनका अद्यावधिक, कथा र घोषणाहरू' : 'Updates, stories and announcements from NMCN');
+---
+
+<BaseLayout title={pageTitle} description={pageSubtitle}>
+  <HeroSection
+    title={pageTitle}
+    subtitle={pageSubtitle}
+  />
+
+  <section class="section">
+    <div class="container">
+      {posts.length === 0 ? (
+        <div class="empty-state">
+          <p>{t('news.empty') || (locale === 'ne' ? 'अहिलेसम्म कुनै समाचार लेख छैन। कृपया चाँडै फेरि हेर्नुहोस्।' : 'No news articles yet. Please check back soon.')}</p>
+        </div>
+      ) : (
+        <div class="news-grid">
+          {posts.map((post) => (
+            <article class="news-card">
+              {post.image && (
+                <a href={localizedPath(locale, `/news/${post.slug}`)} class="news-image-wrapper">
+                  <img
+                    src={post.image}
+                    alt={post.imageAlt}
+                    loading="lazy"
+                    class="news-image"
+                  />
+                </a>
+              )}
+              <div class="news-content">
+                <div class="news-meta">
+                  <time datetime={post.isoDate}>{post.formattedDate}</time>
+                  {post.author && <span class="news-author">• {post.author}</span>}
+                </div>
+                <h2 class="news-title">
+                  <a href={localizedPath(locale, `/news/${post.slug}`)}>{post.title}</a>
+                </h2>
+                {post.excerpt && <p class="news-excerpt">{post.excerpt}</p>}
+                <a href={localizedPath(locale, `/news/${post.slug}`)} class="news-link">
+                  {t('common.readMore') || (locale === 'ne' ? 'थप पढ्नुहोस्' : 'Read More')} →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: #64748b;
+    font-size: 1.125rem;
+  }
+
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .news-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .news-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 0.75rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+  }
+
+  .news-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+  }
+
+  .news-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .news-card:hover .news-image {
+    transform: scale(1.04);
+  }
+
+  .news-content {
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.75rem;
+  }
+
+  .news-meta {
+    font-size: 0.875rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .news-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .news-title a {
+    color: #0f172a;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .news-title a:hover {
+    color: var(--color-primary);
+  }
+
+  .news-excerpt {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .news-link {
+    margin-top: auto;
+    padding-top: 1rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .news-link:hover {
+    gap: 0.5rem;
+  }
+</style>

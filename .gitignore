@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+
+# Astro temporary files
+.astro/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# TinaCMS generated files
+tina/__generated__/
+.tina/
+
+# macOS system files
+.DS_Store
+*.af~lock~

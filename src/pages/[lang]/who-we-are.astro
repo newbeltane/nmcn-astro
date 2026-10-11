@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import { localePaths, getPage } from '../../lib/content';
+import { useTranslations, type Locale } from '../../i18n/utils';
+
+export const getStaticPaths = localePaths;
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const t = useTranslations(locale);
+const page = await getPage(locale, 'who-we-are');
+
+const renderedHtml: string = page?.rendered?.html ?? '';
+const pageTitle: string = page?.data?.title ?? t('nav.whoWeAre');
+const pageDescription: string = page?.data?.description ?? '';
+const heroEyebrow: string | undefined = page?.data?.heroEyebrow;
+const heroTitle: string = page?.data?.heroTitle ?? t('whoWeAre.heading');
+const heroSubtitle: string = page?.data?.heroSubtitle ?? t('whoWeAre.intro');
+
+const boardAlt = locale === 'ne' ? 'एनएमसीएन कार्यसमिति' : 'NMCN Executive Committee';
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <HeroSection
+    eyebrow={heroEyebrow}
+    title={heroTitle}
+    subtitle={heroSubtitle}
+  />
+
+  <section class="section intro-section">
+    <div class="container content-container">
+      {renderedHtml ? (
+        <Fragment set:html={renderedHtml} />
+      ) : (
+        <div class="prose">
+          <p class="lead">{t('whoWeAre.intro')}</p>
+          <h2>{t('whoWeAre.aboutTitle')}</h2>
+          <p>{t('whoWeAre.aboutBody')}</p>
+
+          <div class="grid grid-2 mv-grid">
+            <div class="card mv-card">
+              <h3>{t('whoWeAre.missionTitle')}</h3>
+              <p>{t('whoWeAre.missionBody')}</p>
+            </div>
+            <div class="card mv-card">
+              <h3>{t('whoWeAre.visionTitle')}</h3>
+              <p>{t('whoWeAre.visionBody')}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Dedicated Board Section -->
+  <section class="section board-section" aria-label={boardAlt}>
+    <div class="container board-container max-w-4xl">
+      <div class="board-card">
+        <img
+          src="/images/board.webp"
+          alt={boardAlt}
+          width="1511"
+          height="1133"
+          loading="lazy"
+          class="board-image"
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(3.5rem, 6vw, 5.5rem);
+  }
+
+  .intro-section {
+    padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .content-container {
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .board-section {
+    padding-top: 0;
+    padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+  }
+
+  .board-container,
+  .max-w-4xl {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+
+  .board-card {
+    border-radius: var(--radius-lg, 0.75rem);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+    background: #ffffff;
+  }
+
+  .board-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: inherit;
+  }
+
+  .prose h2 {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 800;
+    color: #1e293b;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .prose p {
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose p.lead {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    line-height: 1.6;
+  }
+
+  .mv-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .mv-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .mv-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 0.5rem);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mv-card h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+  }
+
+  .mv-card p {
+    margin-bottom: 0;
+  }
+</style>

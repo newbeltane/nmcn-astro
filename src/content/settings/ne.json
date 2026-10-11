@@ -1,0 +1,23 @@
+{
+  "siteName": "नेशनल मिसन कमिसन नेपाल",
+  "tagline": "अपुगेकाहरूसम्म पुग्न सन्तहरूलाई तालिम र सुसज्जित गर्दै",
+  "contact": {
+    "address": "पोस्ट बक्स ८९७५, ईपीसी-८३०, काठमाडौं, नेपाल",
+    "phone": "+९७७ १ ५५९१७०६",
+    "email": "nmcn2001@gmail.com"
+  },
+  "social": {
+    "facebook": "https://facebook.com/",
+    "youtube": "https://youtube.com/",
+    "instagram": "https://instagram.com/"
+  },
+  "nav": [
+    { "label": "गृहपृष्ठ", "href": "/ne/" },
+    { "label": "हामी को हौं", "href": "/ne/who-we-are" },
+    { "label": "हामी के गर्छौं", "href": "/ne/what-we-do" },
+    { "label": "समाचार", "href": "/ne/news" },
+    { "label": "सहभागी हुनुहोस्", "href": "/ne/get-involved" },
+    { "label": "दान गर्नुहोस्", "href": "/ne/donate" },
+    { "label": "सम्पर्क गर्नुहोस्", "href": "/ne/contact" }
+  ]
+}

@@ -1,0 +1,133 @@
+---
+// src/components/HeroSection.astro
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle: string;
+  image?: string;
+  imageAlt?: string;
+  ctas?: { label: string; href: string; style: string }[];
+}
+
+const { 
+  title, 
+  subtitle, 
+  image 
+} = Astro.props;
+
+// Safe check for placeholder images or entirely missing image props
+const isPlaceholder = !image || image.includes('placehold') || image.includes('NMCN');
+const bgImage = isPlaceholder 
+  ? 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2874&q=80'
+  : image;
+---
+
+<section class="hero-section" id="hero">
+  <!-- Isolated background element with explicit width/height for flexbox compatibility -->
+  <div class="hero-bg" id="hero-bg" style={`background-image: url('${bgImage}');`}></div>
+  
+  <!-- Gradient overlay -->
+  <div class="hero-overlay" id="hero-overlay"></div>
+  
+  <div class="container hero-container">
+    <div class="hero-content">
+      <h1 class="hero-title">{title}</h1>
+      <p class="hero-subtitle">{subtitle}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Client-side script to scale the background image and fade the overlay based on scroll depth
+  const bg = document.getElementById('hero-bg');
+  const hero = document.getElementById('hero');
+  const overlay = document.getElementById('hero-overlay');
+
+  if (bg && hero && overlay) {
+    const handleScroll = () => {
+      // Only execute the math if the user is near the top of the page (hero is in view)
+      const rect = hero.getBoundingClientRect();
+      if (rect.bottom > 0) {
+        const scrollY = window.scrollY;
+        
+        // Background starts at a scale of 1, grows gently by 0.0004 for every pixel scrolled
+        const scale = 1 + (scrollY * 0.0004);
+        bg.style.transform = `scale(${scale})`;
+        
+        // Fades overlay opacity down to a minimum of 0.15 over the first 600px of scroll
+        const fadeProgress = Math.min(scrollY / 600, 1);
+        const opacity = 1 - (fadeProgress * 0.85); 
+        overlay.style.opacity = opacity.toString();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Trigger once on load in case the user refreshes midway down the page
+    handleScroll();
+  }
+</script>
+
+<style>
+  .hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden; /* Prevents the scaling image from expanding the page width */
+  }
+
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    will-change: transform; /* Optimizes browser rendering for smooth animations */
+    transform-origin: center center;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Deep blue gradient fading into a softer slate to match your brand colors */
+    background: linear-gradient(to right, rgba(11, 102, 194, 0.95) 0%, rgba(11, 102, 194, 0.6) 60%, rgba(15, 23, 42, 0.2) 100%);
+    z-index: 1;
+    will-change: opacity;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .hero-content {
+    max-width: 750px;
+    color: #ffffff;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+  }
+</style>

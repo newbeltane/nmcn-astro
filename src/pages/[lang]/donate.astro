@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import { localePaths, getPage } from '../../lib/content';
+import { useTranslations, type Locale } from '../../i18n/utils';
+import { org } from '../../data/site';
+
+export const getStaticPaths = localePaths;
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const t = useTranslations(locale);
+const page = await getPage(locale, 'donate');
+---
+
+<BaseLayout title={t('donate.title') || 'Donate'} description={page?.data.description}>
+  <HeroSection
+    eyebrow={page?.data.heroEyebrow}
+    title={page?.data.heroTitle ?? t('donate.heading')}
+    subtitle={page?.data.heroSubtitle ?? t('donate.intro')}
+  />
+
+  <section class="section">
+    <div class="donate-page-wrapper">
+      <!-- Centered Intro Header -->
+      <div class="donate-header center">
+        <h2>{t('donate.methodsTitle') !== 'donate.methodsTitle' ? t('donate.methodsTitle') : 'Ways to Support Our Mission'}</h2>
+        <p class="lead">
+          {t('donate.methodsBody') !== 'donate.methodsBody' ? t('donate.methodsBody') : 'Your contribution directly empowers our education centers and community support programs in Nepal.'}
+        </p>
+      </div>
+
+      <!-- Centered Single Column Bank Details Card (80% Width) -->
+      <div class="donate-card-centered">
+        <h3>Bank Details</h3>
+        <ul class="bank-list">
+          <li>
+            <strong>Account Holder:</strong>
+            <span>National Mission Commission - Nepal</span>
+          </li>
+          <li>
+            <strong>Bank Name:</strong>
+            <span>HIMALAYAN BANK LTD.</span>
+          </li>
+          <li>
+            <strong>Account Number:</strong>
+            <span>12003801560018</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* --- 80% Width Centered Wrapper --- */
+  .donate-page-wrapper {
+    width: 80%;
+    max-width: 800px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .donate-header {
+    text-align: center;
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .donate-header h2 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .donate-header p.lead {
+    color: #475569;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* --- Centered Bank Details Card --- */
+  .donate-card-centered {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .donate-card-centered:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+  }
+
+  .donate-card-centered h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2rem;
+  }
+
+  .bank-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+  }
+
+  .bank-list li {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+    color: #1e293b;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .bank-list li strong {
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .bank-list li:last-child {
+    border-bottom: none;
+  }
+</style>

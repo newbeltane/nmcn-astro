@@ -1,0 +1,18 @@
+---
+// Root redirect to the default locale (static-friendly).
+const target = '/en/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>National Mission Commission of Nepal</title>
+    <script is:inline>window.location.replace('/en/');</script>
+  </head>
+  <body>
+    <p>Redirecting to <a href="/en/">National Mission Commission of Nepal</a>…</p>
+  </body>
+</html>

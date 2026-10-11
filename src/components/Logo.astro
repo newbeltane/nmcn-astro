@@ -1,0 +1,31 @@
+---
+// src/components/Logo.astro
+export interface Props {
+  class?: string;
+  width?: number | string;
+  height?: number | string;
+}
+
+const { 
+  class: className = '',
+  width = 120,
+  height = 120
+} = Astro.props;
+---
+
+<img 
+  src="/images/logo.png" 
+  alt="National Mission Commission of Nepal (NMCN) Logo" 
+  width={width} 
+  height={height} 
+  class={`site-logo ${className}`} 
+/>
+
+<style>
+  .site-logo {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+</style>

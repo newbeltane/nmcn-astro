@@ -1,0 +1,198 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import { localePaths, getPage } from '../../lib/content';
+import { useTranslations, localizedPath, type Locale } from '../../i18n/utils';
+
+export const getStaticPaths = localePaths;
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const t = useTranslations(locale);
+const page = await getPage(locale, 'what-we-do');
+
+interface Program {
+  title: string;
+  location: string;
+  established: string;
+  description: string;
+  image: string;
+}
+
+const programs: Program[] = [
+  {
+    title: "Kathmandu Education Centre",
+    location: "Central Kathmandu",
+    established: "2009",
+    description: "Provides regular weekday classes and extracurricular activities that help children and families learn new skills and improve their lives. A holistic approach includes trips, shared meals and confidence-building.",
+    image: "/images/kids-outdoors.jpg"
+  },
+  {
+    title: "Godawari Education Centre",
+    location: "Godawari, ~10km from Kathmandu",
+    established: "2014",
+    description: "Opened in 2014 and supported by sponsor Orphan Outreach, this centre serves children from a slum area, bringing dreams within reach and fostering community unity across many ethnic groups.",
+    image: "/images/Shared%20meal.webp"
+  }
+];
+
+const renderedHtml: string = page?.rendered?.html ?? '';
+const pageTitle: string = page?.data?.title ?? t('nav.whatWeDo');
+const pageDescription: string = page?.data?.description ?? '';
+const heroEyebrow: string | undefined = page?.data?.heroEyebrow;
+const heroTitle: string = page?.data?.heroTitle ?? t('whatWeDo.heading');
+const heroSubtitle: string = page?.data?.heroSubtitle ?? t('whatWeDo.intro');
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <HeroSection
+    eyebrow={heroEyebrow}
+    title={heroTitle}
+    subtitle={heroSubtitle}
+  />
+
+  <section class="section">
+    <div class="container">
+      {renderedHtml ? (
+        <Fragment set:html={renderedHtml} />
+      ) : (
+        <p>{pageDescription}</p>
+      )}
+    </div>
+  </section>
+
+  <!-- Programs / Education Centres -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head center">
+        <h2>Our Education Centres</h2>
+      </div>
+      <div class="grid grid-2">
+        {programs.map((p: Program) => (
+          <div class="centre-card">
+            <!-- Interactive Image Overlay Wrapper -->
+            <div class="story-image-wrapper centre-image-height centre-image-container">
+              <img
+                src={p.image}
+                alt={`${p.title} — ${p.location}`}
+                width="560"
+                height="350"
+                loading="lazy"
+                class="story-image"
+              />
+              <div class="centre-overlay"></div>
+            </div>
+
+            <!-- Content Body -->
+            <div class="centre-content">
+              <h3>{p.title}</h3>
+              <div class="centre-meta">
+                <span>{p.location}</span> • <span>Est. {p.established}</span>
+              </div>
+              <p>{p.description}</p>
+              <a href={localizedPath(locale, '/contact')} class="centre-link">
+                {t('common.learnMore') || 'Learn More'} →
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section-head {
+    margin-bottom: 3rem;
+  }
+  .section-head.center {
+    text-align: center;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 768px) {
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Centre Card & Hover Effects matching Homepage */
+  .centre-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .centre-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+  }
+  .centre-image-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #f1f5f9;
+  }
+  .centre-image-height {
+    aspect-ratio: 16 / 10;
+  }
+  .story-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .centre-card:hover .story-image {
+    transform: scale(1.05);
+  }
+  .centre-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .centre-card:hover .centre-overlay {
+    opacity: 0;
+  }
+  .centre-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .centre-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+  }
+  .centre-meta {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+  }
+  .centre-content p {
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+  .centre-link {
+    font-weight: 700;
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .centre-link:hover {
+    text-decoration: underline;
+  }
+</style>

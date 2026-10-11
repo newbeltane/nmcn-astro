@@ -1,0 +1,553 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroSection from '../../components/HeroSection.astro';
+import BeneficiaryStory from '../../components/BeneficiaryStory.astro';
+import { localePaths, getPage } from '../../lib/content';
+import { useTranslations, getList, localizedPath, type Locale } from '../../i18n/utils';
+import { homeStats } from '../../data/site';
+
+export const getStaticPaths = localePaths;
+
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const t = useTranslations(locale);
+const page = await getPage(locale, 'home');
+const objectives = getList(locale, 'objectives');
+
+const stats = homeStats.map((s) => ({ value: s.value, suffix: s.suffix, label: t(s.labelKey) }));
+
+// Localized Beneficiary Stories
+const storiesData = {
+  en: [
+    {
+      name: "Sushit Gyaba",
+      role: "Godawari Education Centre",
+      quote: "Sushit initially struggled academically and lacked confidence. GEC's after-school programme gave him guidance and encouragement, helping him pass his annual examinations, develop his interests in art and football, and form lasting friendships.",
+      image: "/images/Sushit.webp"
+    },
+    {
+      name: "Srijana Chepang",
+      role: "Thapathali Tuition Center — Grade 9",
+      quote: "Srijana lives in the Thapathali slum area and has attended the tuition centre since Grade 6. The centre supports her with homework, project assignments, academic improvement, and personal concerns.",
+      image: "/images/Srijana.webp"
+    }
+  ],
+  ne: [
+    {
+      name: "सुशित ग्याबा",
+      role: "गोदावरी शिक्षा केन्द्र",
+      quote: "सुरुमा सुशित पढाइमा संघर्ष गरिरहेका थिए र आत्मविश्वासको कमी थियो। जीईसीको अतिरिक्त कक्षा कार्यक्रमले उनलाई मार्गदर्शन र हौसला दियो, जसले उनलाई वार्षिक परीक्षा उत्तीर्ण गर्न, कला र फुटबलमा रुचि विकास गर्न र दिगो मित्रता बनाउन मद्दत गर्यो।",
+      image: "/images/Sushit.webp"
+    },
+    {
+      name: "सृजना चेपाङ",
+      role: "थापाथली ट्युसन सेन्टर — कक्षा ९",
+      quote: "सृजना थापाथली सुकुम्बासी बस्तीमा बस्छिन् र कक्षा ६ देखि ट्युसन सेन्टरमा अध्ययनरत छिन्। केन्द्रले उनलाई गृहकार्य, परियोजना कार्य, शैक्षिक सुधार र व्यक्तिगत समस्याहरूमा सहयोग गर्दै आएको छ।",
+      image: "/images/Srijana.webp"
+    }
+  ]
+};
+
+const currentStories = storiesData[locale] ?? storiesData.en;
+
+// Localized Nepal Facts
+const nepalFactsData = {
+  en: [
+    { value: "142", label: "Ethnic groups (inc. castes) — 2021 census" },
+    { value: "25% → 3.6%", label: "Poverty fell between 2011 and 2023" },
+    { value: "29.6M", label: "Population of Nepal" },
+    { value: "23.8%", label: "Nepal's population that is urban (2024)" }
+  ],
+  ne: [
+    { value: "१४२", label: "जातीय समूहहरू (जात सहित) — २०२१ जनगणना" },
+    { value: "२५% → ३.६%", label: "सन् २०११ देखि २०२३ सम्म गरिबी दर घट्यो" },
+    { value: "२.९६ करोड", label: "नेपालको कुल जनसंख्या" },
+    { value: "२३.८%", label: "सहरी क्षेत्रमा बस्ने जनसंख्या (२०२४)" }
+  ]
+};
+
+const currentFacts = nepalFactsData[locale] ?? nepalFactsData.en;
+---
+
+<BaseLayout title={t('site.name')} description={page?.data.description}>
+  <HeroSection
+    title={page?.data.heroTitle ?? t('home.heroTitle')}
+    subtitle={page?.data.heroSubtitle ?? t('home.heroSubtitle')}
+    image={page?.data.heroImage}
+  />
+
+  <!-- Story -->
+  <section class="section">
+    <div class="container story-layout">
+      <div class="story-text-content">
+        <h2>{t('home.storyTitle')}</h2>
+        <p class="lead">{t('home.storyBody')}</p>
+        <a href={localizedPath(locale, '/who-we-are')} class="btn btn-primary">{t('common.readMore')}</a>
+      </div>
+      
+      <!-- Image Card without Text Overlay -->
+      <div class="story-image-wrapper">
+        <img
+          src="/images/girls in traditional dress.webp"
+          alt="NMCN Nepal"
+          width="560"
+          height="420"
+          loading="lazy"
+          class="story-image"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Objectives -->
+  <section class="section section-alt section-compact">
+    <div class="container">
+      <div class="section-head center">
+        <h2>{t('home.objectivesTitle')}</h2>
+      </div>
+      <ol class="objectives-grid">
+        {objectives.map((o, i) => (
+          <li class="objective-item">
+            <span class="objective-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <p>{o}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Dedicated Parallax Stats Section -->
+  <section class="parallax-stats-section">
+    <div class="parallax-overlay"></div>
+    <div class="container relative-z">
+      <div class="stats-flex-grid">
+        {stats.map((s) => (
+          <div class="stat-card">
+            <div class="stat-value-wrapper">
+              <span class="stat-value" data-target={s.value}>0</span>
+              {s.suffix && <span class="stat-suffix">{s.suffix}</span>}
+            </div>
+            <p class="stat-label">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stories Section with Compact Spacing -->
+  <section class="section section-alt section-compact">
+    <div class="container">
+      <div class="section-head center">
+        <h2>{t('home.storiesTitle')}</h2>
+      </div>
+      <div class="grid grid-2">
+        {currentStories.map((s) => (
+          <BeneficiaryStory name={s.name} role={s.role} quote={s.quote} image={s.image} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Nepal Facts Section with Semi-Translucent Header Box -->
+  <section class="nepal-map-section">
+    <div class="map-section-overlay"></div>
+    <div class="container relative-z">
+      <div class="section-head center map-head-box">
+        <h2>{t('home.nepalFactsTitle')}</h2>
+        <p class="lead">{t('home.nepalFactsSubtitle')}</p>
+      </div>
+      <div class="grid grid-4">
+        {currentFacts.map((f) => (
+          <div class="fact-card">
+            <span class="fact-value">{f.value}</span>
+            <span class="fact-label">{f.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-strip">
+    <div class="container cta-inner">
+      <div>
+        <h2>{t('home.ctaTitle')}</h2>
+        <p>{t('home.ctaBody')}</p>
+      </div>
+      <a href={localizedPath(locale, '/donate')} class="btn btn-gold">{t('home.ctaButton')}</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function initStatsCounters() {
+    const counters = document.querySelectorAll('.stat-value');
+    if (!counters.length) return;
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counter = entry.target;
+          const target = parseInt(counter.getAttribute('data-target') || '0', 10);
+          const duration = 2000;
+          let startTime: number | null = null;
+
+          const step = (timestamp: number) => {
+            if (startTime === null) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const easeProgress = 1 - Math.pow(1 - progress, 4);
+            counter.textContent = Math.floor(easeProgress * target).toString();
+
+            if (progress < 1) {
+              window.requestAnimationFrame(step);
+            } else {
+              counter.textContent = target.toString();
+            }
+          };
+
+          window.requestAnimationFrame(step);
+          obs.unobserve(counter);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    counters.forEach(c => observer.observe(c));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStatsCounters);
+  } else {
+    initStatsCounters();
+  }
+  document.addEventListener('astro:page-load', initStatsCounters);
+</script>
+
+<style>
+  .section {
+    padding-block: clamp(4rem, 8vw, 7rem);
+  }
+
+  .section-compact {
+    padding-block: clamp(2.5rem, 4vw, 3.5rem);
+  }
+
+  .section-head {
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .section-head.center {
+    text-align: center;
+    max-width: 800px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-head h2 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-head p.lead {
+    margin: 0;
+    color: #64748b;
+    font-size: clamp(1.125rem, 2vw, 1.25rem);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .story-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  
+  .story-text-content h2 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .story-text-content p.lead {
+    color: #475569;
+    font-size: clamp(1.125rem, 2vw, 1.25rem);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  @media (min-width: 900px) {
+    .story-layout { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; }
+  }
+
+  .story-image-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+  }
+  
+  .story-image { 
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .story-image-wrapper:hover .story-image {
+    transform: scale(1.03);
+  }
+
+  .objectives-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .objective-item {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .objective-item:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 20px 25px -5px rgba(11, 102, 194, 0.25), 0 8px 10px -6px rgba(11, 102, 194, 0.1);
+    transform: translateY(-6px) scale(1.02);
+  }
+
+  .objective-item p { 
+    margin: 0; 
+    color: #334155;
+    line-height: 1.6;
+    transition: color 0.4s ease;
+  }
+
+  .objective-item:hover p {
+    color: #ffffff;
+  }
+
+  .objective-num {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1;
+    flex-shrink: 0;
+    opacity: 0.8;
+    transition: color 0.4s ease, opacity 0.4s ease;
+  }
+
+  .objective-item:hover .objective-num {
+    color: #ffffff;
+    opacity: 1;
+  }
+
+  .parallax-stats-section {
+    position: relative;
+    padding-block: clamp(4rem, 8vw, 6rem); 
+    background-image: url('/images/Kids-with-gifts-1.webp');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: #1e293b;
+  }
+  
+  .parallax-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.15);
+    z-index: 1;
+  }
+  
+  .relative-z {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .stats-flex-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .stat-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    flex: 1 1 260px;
+    max-width: 300px;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .stat-card:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 20px 25px -5px rgba(11, 102, 194, 0.25), 0 8px 10px -6px rgba(11, 102, 194, 0.1);
+    transform: translateY(-6px) scale(1.02);
+  }
+
+  .stat-value-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 2px;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+    transition: color 0.4s ease;
+  }
+
+  .stat-value, .stat-suffix {
+    color: inherit;
+    transition: color 0.4s ease;
+  }
+
+  .stat-card:hover .stat-value-wrapper,
+  .stat-card:hover .stat-value,
+  .stat-card:hover .stat-suffix {
+    color: #ffffff;
+  }
+
+  .stat-label { 
+    color: #475569; 
+    font-size: 1rem; 
+    font-weight: 500;
+    margin: 0;
+    transition: color 0.4s ease;
+  }
+  
+  .stat-card:hover .stat-label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .nepal-map-section {
+    position: relative;
+    padding-block: clamp(4rem, 8vw, 7rem);
+    background-image: url('/images/map.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: #f8fafc;
+  }
+
+  .map-section-overlay {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: 1;
+  }
+
+  .map-head-box {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .fact-card {
+    text-align: center;
+    padding: 2.5rem 1.25rem;
+    border-radius: var(--radius);
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fact-card:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 20px 25px -5px rgba(11, 102, 194, 0.25), 0 8px 10px -6px rgba(11, 102, 194, 0.1);
+    transform: translateY(-6px) scale(1.02);
+  }
+
+  .fact-value {
+    display: block;
+    font-size: clamp(1.5rem, 2.75vw, 2.35rem);
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    width: 100%;
+    text-align: center;
+    transition: color 0.4s ease;
+  }
+
+  .fact-card:hover .fact-value {
+    color: #ffffff;
+  }
+
+  .fact-label { 
+    color: #64748b; 
+    font-size: 0.938rem; 
+    font-weight: 500;
+    line-height: 1.4;
+    transition: color 0.4s ease;
+  }
+
+  .fact-card:hover .fact-label {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .cta-strip {
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    color: #fff;
+  }
+
+  .cta-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .cta-inner h2 { 
+    color: #fff; 
+    margin: 0 0 0.5rem 0; 
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+  }
+
+  .cta-inner p { 
+    color: rgba(255, 255, 255, 0.9); 
+    margin: 0; 
+    max-width: 60ch; 
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+</style>

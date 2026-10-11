@@ -1,0 +1,17 @@
+# Cloudflare Workers configuration — serves the static Astro build
+# via Workers Static Assets (no server runtime required).
+# Docs: https://developers.cloudflare.com/workers/static-assets/
+
+name = "nmcn-nepal"
+compatibility_date = "2025-01-01"
+
+# The built static site is uploaded and served directly from the edge.
+[assets]
+directory = "./dist"
+# Serve the generated 404 page for unknown routes.
+not_found_handling = "404-page"
+# Redirect visitors from /foo to /foo/ so directory index.html is served.
+html_handling = "auto-trailing-slash"
+
+# Uncomment and set your account ID (or use CLOUDFLARE_ACCOUNT_ID env var):
+# account_id = "your-cloudflare-account-id"

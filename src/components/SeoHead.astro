@@ -1,0 +1,46 @@
+---
+import { org } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  locale?: string;
+  image?: string;
+  path?: string;
+}
+
+const {
+  title,
+  description = org.tagline,
+  locale = 'en',
+  image = 'https://placehold.co/1200x630/046bd2/ffffff/png?text=NMCN+Nepal',
+  path = '',
+} = Astro.props;
+
+const fullTitle = title === org.name ? `${org.name} — ${org.tagline}` : `${title} — ${org.name}`;
+const canonical = new URL(path || Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={org.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={locale === 'ne' ? 'ne_NP' : 'en_GB'} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+<meta name="theme-color" content="#046bd2" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />

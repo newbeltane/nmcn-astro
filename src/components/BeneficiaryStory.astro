@@ -1,0 +1,143 @@
+---
+// src/components/BeneficiaryStory.astro
+export interface Props {
+  name: string;
+  role?: string;
+  quote: string;
+  image: string;
+}
+const { name, role, quote } = Astro.props;
+
+// Extract the first name to display inside the badge
+const firstName = name.split(' ')[0];
+---
+
+<figure class="story-card">
+  <!-- Small circular badge container -->
+  <div class="story-avatar-badge" aria-hidden="true">
+    <span class="avatar-text">{firstName}</span>
+  </div>
+
+  <blockquote class="story-quote">
+    <p>{quote}</p>
+  </blockquote>
+  <figcaption class="story-caption">
+    <span class="story-name">{name}</span>
+    {role && <span class="story-role">{role}</span>}
+  </figcaption>
+</figure>
+
+<style>
+  .story-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin: 0;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .story-card:hover {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 20px 25px -5px rgba(11, 102, 194, 0.25), 0 8px 10px -6px rgba(11, 102, 194, 0.1);
+    transform: translateY(-6px) scale(1.02);
+  }
+
+  .story-card::before {
+    content: '\201C';
+    position: absolute;
+    top: 0.5rem;
+    right: 1.5rem;
+    font-size: 4rem;
+    line-height: 1;
+    color: rgba(4, 107, 210, 0.12);
+    font-family: Georgia, serif;
+    transition: color 0.4s ease;
+  }
+
+  .story-card:hover::before {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Fixed Small Circular Badge */
+  .story-avatar-badge {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: background-color 0.4s ease;
+  }
+
+  .story-card:hover .story-avatar-badge {
+    background-color: #ffffff; /* Solid white circle on hover */
+  }
+
+  .avatar-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff; /* White text by default */
+    white-space: nowrap;
+    transition: color 0.4s ease;
+  }
+
+  .story-card:hover .avatar-text {
+    color: var(--color-primary); /* Primary blue text on hover */
+  }
+
+  .story-quote { 
+    margin: 0; 
+  }
+
+  .story-quote p { 
+    font-size: 1.02rem; 
+    color: var(--color-body); 
+    font-style: italic; 
+    line-height: 1.55;
+    margin-bottom: 0.5rem;
+    transition: color 0.4s ease;
+  }
+
+  .story-card:hover .story-quote p {
+    color: #ffffff;
+  }
+
+  .story-caption { 
+    display: flex; 
+    flex-direction: column; 
+    margin-top: auto; 
+    gap: 0.15rem;
+  }
+
+  .story-name { 
+    font-weight: 700; 
+    color: var(--color-navy); 
+    transition: color 0.4s ease;
+  }
+
+  .story-card:hover .story-name {
+    color: #ffffff;
+  }
+
+  .story-role { 
+    font-size: 0.85rem; 
+    color: var(--color-primary); 
+    font-weight: 600; 
+    transition: color 0.4s ease;
+  }
+
+  .story-card:hover .story-role {
+    color: rgba(255, 255, 255, 0.9);
+  }
+</style>

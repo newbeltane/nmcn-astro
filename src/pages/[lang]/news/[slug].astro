@@ -1,0 +1,89 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import HeroSection from '../../../components/HeroSection.astro';
+import { useTranslations, localizedPath, type Locale } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const newsEntries = await getCollection('news');
+
+  return newsEntries.map((entry) => {
+    const idLocale = entry.id.startsWith('ne/') ? 'ne' : 'en';
+    const slug = entry.id.replace(new RegExp(`^${idLocale}/`), '').replace(/\.md$/, '');
+
+    return {
+      params: { lang: idLocale, slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { lang } = Astro.params;
+const locale = lang as Locale;
+const t = useTranslations(locale);
+const { Content } = await render(entry);
+
+const postDate = new Date(entry.data.date).toLocaleDateString(locale === 'ne' ? 'ne-NP' : 'en-GB', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.excerpt}>
+  <HeroSection
+    title={entry.data.title}
+    subtitle={`${postDate}${entry.data.author ? ` • ${entry.data.author}` : ''}`}
+    image={entry.data.image}
+  />
+
+  <article class="section">
+    <div class="container article-container">
+      <div class="article-prose">
+        <Content />
+      </div>
+
+      <div class="article-footer">
+        <a href={localizedPath(locale, '/news')} class="btn btn-secondary">
+          ← {t('common.backToNews') || 'Back to News'}
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+
+  .article-container {
+    max-width: 800px;
+    margin-inline: auto;
+  }
+
+  .article-prose {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #334155;
+  }
+
+  .article-prose :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .article-prose :global(h2) {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .article-footer {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+</style>
