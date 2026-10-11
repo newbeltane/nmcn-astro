@@ -2,7 +2,6 @@ import { defineConfig } from 'tinacms';
 
 // TinaCMS configuration for NMCN Nepal.
 // Docs: https://tina.io/docs/reference/config/
-// Set TINA_CLIENT_ID and TINA_TOKEN (and TINA_SEARCH_TOKEN if used) in .env.
 
 const branch =
   process.env.GITHUB_BRANCH ||
@@ -17,7 +16,11 @@ const localeOptions = [
 
 export default defineConfig({
   branch,
-  clientId: process.env.TINA_CLIENT_ID || '',
+  clientId:
+    process.env.TINA_CLIENT_ID ||
+    process.env.PUBLIC_TINA_CLIENT_ID ||
+    process.env.TINA_PUBLIC_CLIENT_ID ||
+    '50340f72-ad16-46ad-9415-97cc07d05323',
   token: process.env.TINA_TOKEN || '',
 
   build: {
@@ -41,14 +44,6 @@ export default defineConfig({
         label: 'Pages',
         path: 'src/content/pages',
         format: 'md',
-        ui: {
-          // Files are named <locale>/<slug>.md
-          router: ({ document }) => {
-            const parts = document._sys.relativePath.replace(/\.md$/, '').split('/');
-            const [locale, slug] = parts;
-            return `/${locale}/${slug === 'home' ? '' : slug}`;
-          },
-        },
         fields: [
           { type: 'string', name: 'title', label: 'Page Title', isTitle: true, required: true },
           { type: 'string', name: 'description', label: 'SEO Description', ui: { component: 'textarea' } },
@@ -106,8 +101,6 @@ export default defineConfig({
           { type: 'rich-text', name: 'body', label: 'Body', isBody: true },
         ],
       },
-
-
 
       // ---------------------------------------------------------------
       // Site settings (nav, footer, social) — one JSON file per locale
