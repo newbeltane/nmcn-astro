@@ -2,7 +2,7 @@
 # via Workers Static Assets (no server runtime required).
 # Docs: https://developers.cloudflare.com/workers/static-assets/
 
-name = "nmcn-nepal"
+name = "nmcn-astro"
 compatibility_date = "2025-01-01"
 
 # The built static site is uploaded and served directly from the edge.
