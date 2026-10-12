@@ -37,31 +37,39 @@ const siteStrapline = t('site.strapline') !== 'site.strapline' ? t('site.strapli
       <Logo />
     </a>
 
-    <nav class="main-nav" aria-label="Main Navigation">
-      <ul class="nav-list">
-        {navItems.map((item) => (
-          <li class={`nav-item ${item.dropdown ? 'has-dropdown' : ''}`}>
-            <a href={item.href} class="nav-link">
-              {item.label}
-              {item.dropdown && <span class="arrow" aria-hidden="true">▾</span>}
-            </a>
-            {item.dropdown && (
-              <ul class="dropdown-menu">
-                {item.dropdown.map((sub) => (
-                  <li>
-                    <a href={sub.href} class="dropdown-link">{sub.label}</a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <!-- Mobile Menu Toggle Button -->
+    <button class="mobile-toggle" aria-label="Toggle Menu" aria-expanded="false">
+      <span class="hamburger"></span>
+    </button>
 
-    <div class="header-actions">
-      <LanguageSwitcher locale={locale} />
-      <a href={donateHref} class="btn btn-primary donate-btn">{t('nav.donate')}</a>
+    <!-- Wrapper for nav and actions to collapse on mobile -->
+    <div class="nav-wrapper">
+      <nav class="main-nav" aria-label="Main Navigation">
+        <ul class="nav-list">
+          {navItems.map((item) => (
+            <li class={`nav-item ${item.dropdown ? 'has-dropdown' : ''}`}>
+              <a href={item.href} class="nav-link">
+                {item.label}
+                {item.dropdown && <span class="arrow" aria-hidden="true">▾</span>}
+              </a>
+              {item.dropdown && (
+                <ul class="dropdown-menu">
+                  {item.dropdown.map((sub) => (
+                    <li>
+                      <a href={sub.href} class="dropdown-link">{sub.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <LanguageSwitcher locale={locale} />
+        <a href={donateHref} class="btn btn-primary donate-btn">{t('nav.donate')}</a>
+      </div>
     </div>
   </div>
 </header>
@@ -75,6 +83,31 @@ const siteStrapline = t('site.strapline') !== 'site.strapline' ? t('site.strapli
     </div>
   </div>
 </aside>
+
+<script>
+  // Setup client-side interactivity for the mobile menu
+  function setupMobileMenu() {
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const navWrapper = document.querySelector('.nav-wrapper');
+    
+    if (mobileToggle && navWrapper) {
+      // Clean up previous event listeners if Astro view transitions are used
+      const newToggle = mobileToggle.cloneNode(true);
+      mobileToggle.parentNode?.replaceChild(newToggle, mobileToggle);
+      
+      newToggle.addEventListener('click', () => {
+        newToggle.classList.toggle('is-active');
+        navWrapper.classList.toggle('is-active');
+        
+        const isExpanded = newToggle.getAttribute('aria-expanded') === 'true';
+        newToggle.setAttribute('aria-expanded', String(!isExpanded));
+      });
+    }
+  }
+
+  setupMobileMenu();
+  document.addEventListener('astro:after-swap', setupMobileMenu);
+</script>
 
 <style>
   /* Sticky Top Navigation Bar */
@@ -101,6 +134,51 @@ const siteStrapline = t('site.strapline') !== 'site.strapline' ? t('site.strapli
     align-items: center;
     text-decoration: none;
     flex-shrink: 0;
+  }
+
+  /* Mobile Toggle Styles */
+  .mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: auto;
+    z-index: 1001;
+  }
+
+  .hamburger {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #1e293b;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background: #1e293b;
+    transition: transform 0.2s, top 0.2s;
+  }
+
+  .hamburger::before { top: -6px; }
+  .hamburger::after { top: 6px; }
+
+  .mobile-toggle.is-active .hamburger { background: transparent; }
+  .mobile-toggle.is-active .hamburger::before { top: 0; transform: rotate(45deg); }
+  .mobile-toggle.is-active .hamburger::after { top: 0; transform: rotate(-45deg); }
+
+  /* Desktop Wrapper */
+  @media (min-width: 769px) {
+    .nav-wrapper {
+      display: contents;
+    }
   }
 
   .nav-list {
@@ -228,9 +306,76 @@ const siteStrapline = t('site.strapline') !== 'site.strapline' ? t('site.strapli
     line-height: 1.2;
   }
 
+  /* Mobile Overrides */
   @media (max-width: 768px) {
     .lower-header-strip {
       display: none;
+    }
+    
+    .mobile-toggle {
+      display: block;
+    }
+
+    .nav-wrapper {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
+      gap: 1.5rem;
+      
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    .nav-wrapper.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .nav-list {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .dropdown-menu {
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      box-shadow: none;
+      border: none;
+      border-left: 2px solid var(--color-border);
+      border-radius: 0;
+      padding: 0;
+      margin: 0.5rem 0 0 1rem;
+      min-width: auto;
+      display: none;
+    }
+
+    .nav-item.has-dropdown:hover .dropdown-menu,
+    .nav-item.has-dropdown:focus-within .dropdown-menu {
+      display: block;
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+      gap: 1rem;
     }
   }
 </style>
