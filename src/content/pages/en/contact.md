@@ -5,6 +5,7 @@ locale: en
 heroEyebrow: Get In Touch
 heroTitle: Contact Us
 heroSubtitle: We would love to hear from you.
+heroImage: /images/3%20girls.webp
 ---
 
 Please write or call us with your questions or comments. You can use the form to send
