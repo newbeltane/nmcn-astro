@@ -1,11 +1,11 @@
 ---
-title: "Who We Are"
-description: "Learn about the National Mission Commission of Nepal — established in 2001 and registered with the Nepali Government in 2011."
-heroEyebrow: "About Us"
-heroTitle: "Who We Are"
-heroSubtitle: "We train and equip young people and community leaders to serve their community."
-heroImage: "https://placehold.co/640x440/046bd2/ffffff/png?text=Who+We+Are"
-locale: "en"
+title: Who We Are
+description: Learn about the National Mission Commission of Nepal — established in 2001 and registered with the Nepali Government in 2011.
+locale: en
+heroEyebrow: About Us
+heroTitle: Who We Are
+heroSubtitle: We train and equip young people and community leaders to serve their community.
+heroImage: /images/NewBoard2026.gif
 ---
 
 National Mission Commission of Nepal (NMCN) is a national indigenous, non-profit social
