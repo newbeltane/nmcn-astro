@@ -7,17 +7,38 @@
     "email": "nmcn2001@gmail.com"
   },
   "social": {
-    "facebook": "https://facebook.com/",
+    "facebook": "https://www.facebook.com/profile.php?id=61579484164503",
     "youtube": "https://youtube.com/",
     "instagram": "https://instagram.com/"
   },
   "nav": [
-    { "label": "Home", "href": "/en/" },
-    { "label": "Who We Are", "href": "/en/who-we-are" },
-    { "label": "What We Do", "href": "/en/what-we-do" },
-    { "label": "News", "href": "/en/news" },
-    { "label": "Get Involved", "href": "/en/get-involved" },
-    { "label": "Donate", "href": "/en/donate" },
-    { "label": "Contact Us", "href": "/en/contact" }
+    {
+      "label": "Home",
+      "href": "/en/"
+    },
+    {
+      "label": "Who We Are",
+      "href": "/en/who-we-are"
+    },
+    {
+      "label": "What We Do",
+      "href": "/en/what-we-do"
+    },
+    {
+      "label": "News",
+      "href": "/en/news"
+    },
+    {
+      "label": "Get Involved",
+      "href": "/en/get-involved"
+    },
+    {
+      "label": "Donate",
+      "href": "/en/donate"
+    },
+    {
+      "label": "Contact Us",
+      "href": "/en/contact"
+    }
   ]
 }
