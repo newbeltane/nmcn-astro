@@ -9,4 +9,4 @@ author: Raju
 draft: false
 ---
 
-After the recent floods in northern nepal, we were involved in relief work to those affected.
+After the recent floods in northern Nepal, we were involved in relief work to those affected.
