@@ -1,6 +1,6 @@
 ---
 title: Who We Are
-description: Learn about the National Mission Commission of Nepal — established in 2001 and registered with the Nepali Government in 2011.
+description: 'Learn about the National Mission Commission of Nepal, established in 2001 and registered with the Nepali Government in 2011.'
 locale: en
 heroEyebrow: About Us
 heroTitle: Who We Are
