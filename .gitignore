@@ -19,3 +19,4 @@ tina/__generated__/
 # macOS system files
 .DS_Store
 *.af~lock~
+pnpm-workspace.yaml
