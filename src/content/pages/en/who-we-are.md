@@ -5,7 +5,7 @@ locale: en
 heroEyebrow: About Us
 heroTitle: Who We Are
 heroSubtitle: We train and equip young people and community leaders to serve their community.
-heroImage: /images/NewBoard2026.gif
+heroImage: /images/new-board-2026.png
 ---
 
 National Mission Commission of Nepal (NMCN) is a national indigenous, non-profit social
